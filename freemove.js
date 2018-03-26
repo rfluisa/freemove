@@ -1,4 +1,4 @@
-(function () {
+﻿(() => {
     'use strict';
 
     /* ___ CONFIG ___ */
@@ -39,6 +39,10 @@
                         'transport': { 'image': 'img/transport.png' },
                         'screwing': { 'image': 'img/machine.png' },
                         'bonding': { 'image': 'img/machine.png' },
+                        'gear': { 'image': 'img/product_gear.png' },
+						'gear2': { 'image': 'img/product_gear.png' },
+						'shift': { 'image': 'img/product_shift.png' },
+						'shift2': { 'image': 'img/product_shift.png' },
                     },
                 },
             },
@@ -265,17 +269,12 @@
         }
 
         makeDraggable() {
-            this.setAsElementDragger(this.element);
-            return this;
-        }
-
-        setAsElementDragger (element) {
-            element.style.transform = 'matrix(1,0,0,1,0,0)';
+            this.element.style.transform = 'matrix(1,0,0,1,0,0)';
             this.addClass(CONFIG.svg.draggable.class);
             this.addOnMouseDown((event) => {
                 let x = event.clientX;
                 let y = event.clientY;
-                let matrix = element.style.transform.slice(7, -1).split(',');
+                let matrix = this.element.style.transform.slice(7, -1).split(',');
                 
                 for (let i = 0; i < matrix.length; i++) {
                     matrix[i] = parseFloat(matrix[i]);
@@ -285,7 +284,7 @@
                     matrix[4] += event.clientX - x;
                     matrix[5] += event.clientY - y;
 
-                    element.style.transform = "matrix(" + matrix.join(',') + ")";
+                    this.element.style.transform = "matrix(" + matrix.join(',') + ")";
 
                     x = event.clientX;
                     y = event.clientY;
@@ -320,18 +319,6 @@
 
         setData(data) {
             this.setAttribute('d', data);
-            return this;
-        }
-    }
-
-    class SVGElementPolygon extends SVGElement {
-        constructor (points, parent) {
-            super('polygon', parent);
-            this.setData(points);
-        }
-
-        setData(points) {
-            this.setAttribute('points', points);
             return this;
         }
     }
@@ -632,10 +619,6 @@
             return new SVGElementPath(data, this.element);
         }
 
-        addPolygon(points) {
-            return new SVGElementPolygon(points, this.element);
-        }
-
         addCircle(cx, cy, r) {
             return new SVGElementCircle(cx, cy, r, this.element);
         }
@@ -680,28 +663,12 @@
             return new SVGElementUse(id, x, y, width, height, this.element);
         }
 
-        addDragger(x, y, text) {
-            return new SVGElementDragger(x, y, text, this.element);
-        }
-
-        addButton(x, y, text, func) {
-            return new SVGElementButton(x, y, text, func, this.element);
-        }
-
-        addPopup(x, y) {
-            return new SVGElementPopup(x, y, this.element);
-        }
-
         addTrafficlight(x, y) {
             return new SVGElementTrafficlight(x, y, this.element);
         }
 
         addTrafficlightSingle(x, y) {
             return new SVGElementTrafficlightSingle(x, y, this.element);
-        }
-
-        addChartLine(x, y, points) {
-            return new SVGElementChartLine(x, y, points, this.element);
         }
     }
 
@@ -792,61 +759,6 @@
 
     /* ___ SVG CUSTOM ELEMENTS ___ */
 
-    class SVGElementDragger extends SVGElementG {
-        constructor (x, y, text, parent) {
-            super(x, y, parent);
-            this.text = text;
-            this._create();
-        }
-
-        _create () {
-            this.addClass('dragger');
-            this.setAsElementDragger(this.parent);
-            this.addRectRounded(0, 0, 30, 30, 3, 3);
-            this.textelem = this.addText(10, 20, this.text);
-        }
-    }
-
-    class SVGElementButton extends SVGElementG {
-        constructor (x, y, text, func, parent) {
-            super(x, y, parent);
-            this.text = text;
-            this.func = func;
-            this._create();
-        }
-
-        _create() {
-            this.addClass('button');
-            this.addOnClick(this.func);
-            this.addRect(0, 0, 30, 30);
-            this.textelem = this.addText(10, 20, this.text);
-        }
-    }
-
-    class SVGElementPopup extends SVGElementG {
-        constructor (x, y, parent) {
-            super(x, y, parent);
-            this._create();
-        }
-
-        _create() {
-            this.addClass('popup');
-            this.addRect(0, 0, 100, 100);
-            this.addButton(60, 10, 'X', () => this.hide()); // add popup close button
-            this.hide(); // hide element on default
-        }
-
-        show () {
-            this.append();
-            return this;
-        }
-
-        hide () {
-            this.remove();
-            return this;
-        }
-    }
-
     class SVGElementTrafficlightSingle extends SVGElementG {
         constructor (x, y, parent) {
             super(x, y, parent);
@@ -921,49 +833,6 @@
         green() {
             this.off();
             this.lights.green.addClass('green');
-            return this;
-        }
-    }
-
-    class SVGElementChart extends SVGElementG {
-        constructor (x, y, parent) {
-            super(x, y, parent);
-            this._create();
-        }
-
-        _create () {
-            this.addClass('chart');
-        }
-    }
-
-    class SVGElementChartLine extends SVGElementChart {
-        constructor (x, y, points, parent) {
-            super(x, y, parent);
-            this.addPoints(points);
-        }
-
-        _create () {
-            // TODO: remove magic numbers
-            super._create();
-            this.addClass('chart-line');
-            this.canvas = this.addRect(5, 5, 300, 200).addClass('chart-canvas');
-            this.axisX = this.addLine(15, 195, 295, 195);
-            this.axisY = this.addLine(15, 15, 15, 195);
-            this.graph = this.addPolyline([]).addClass('chart-graph');
-        }
-
-        addPoints (points) {
-            // TODO: remove magic numbers
-            points.forEach(point => {
-                const x = 15 + point[0];
-                const y = 195 - point[1];
-                this.addPoint(x, y);
-            });
-            return this;
-        }
-
-        addPoint (x, y) {
-            this.graph.addPoint(x, y);
             return this;
         }
     }
@@ -1135,6 +1004,7 @@
     class StorageMachine extends Storage {
         constructor (drawing) {
             super(drawing);
+            StorageMachine.instance = this; // TODO: better solution than using pseudo singleton instances?
         }
 
         _addNew (data) {
@@ -1240,13 +1110,15 @@
             this.setHeight(CONFIG.svg.guielements.resource.height);
             this.guiElements.image = this.addImage(0, 0, 100, 100, imgSrc);
             this.guiElements.name = this.addText(0, 110, '');
+            // TODO: Wie kann man hier ein leeres Bild einfügen?
+			this.guiElements.productImage = this.addImage(0, 0, 64, 64, null);
         }
 
         update (data) {
             super.update(data);
             this
                 .setName(data.name)
-                .setCurrentProductId(data.currentProductId);
+                .setCurrentProductId(data.currentProductId, data.currentProductType);
 
             return this;
         }
@@ -1256,8 +1128,9 @@
             return this;
         }
 
-        setCurrentProductId (id) {
+        setCurrentProductId (id, type) {
             this.currentProductId = id;
+			this.guiElements.productImage.setSource(CONFIG.svg.guielements.resource.types[type].image);
             return this;
         }
     }
@@ -1268,17 +1141,8 @@
         }
 
         _createGUIElement () {
-
-            /* TODO: create design of dragging and popup-open button, design the popup itself and add popup content */
-
-            super._createGUIElement(CONFIG.svg.guielements.resource.types.default.image);
-
-            this.addDragger(0, 0, 'd');
-            //this.makeDraggable();
-
-            var popup = this.addPopup(0, 0);
-
-            this.addButton(40, 40, 'o', () => popup.show());
+            super._createGUIElement(CONFIG.svg.guielements.resource.types.default.image)
+            this.makeDraggable();
         }
 
         update (data) {
@@ -1374,10 +1238,10 @@
                     this.guiElements.trafficlight.red();
                     break;
                 case 'idle':
-                    this.guiElements.trafficlight.yellow();
+                    this.guiElements.trafficlight.green();
                     break;
                 case 'running':
-                    this.guiElements.trafficlight.green();
+                    this.guiElements.trafficlight.yellow();
                     break;
                 default:
                     this.guiElements.trafficlight.off();
@@ -1407,8 +1271,8 @@
             return this;
         }
 
-        setCurrentProductId (id) {
-            super.setCurrentProductId(id);
+        setCurrentProductId (id, type) {
+            super.setCurrentProductId(id, type);
             this.guiElements.currentProductId.setText('P.Id: ' + id);
             return this;
         }
@@ -1631,12 +1495,6 @@
 
             this.connector = new FreemoveConnector(this);
             this.connector.autoUpdate();
-
-            // chart test: DELETE!
-            const asPopup = false;
-            const chartTest = asPopup ? this.drawing.addPopup(5, 5) : this.drawing;
-            if (asPopup) this.drawing.addButton(5, 5, 'c', () => { chartTest.show() });
-            chartTest.addChartLine(5, 30, [[50, 30], [100, 50], [150, 100], [200, 80], [250, 150]]);
         }
 
         update (state) {

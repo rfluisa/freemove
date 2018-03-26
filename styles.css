@@ -69,30 +69,6 @@ text {
     cursor: move;
 }
 
-.dragger > rect {
-    fill: purple;
-}
-
-.dragger > text {
-    stroke: grey;
-}
-
-.button {
-    cursor: pointer;
-}
-
-.button > rect {
-    fill: blanchedalmond;
-}
-
-.button > text {
-    stroke: blue;
-}
-
-.popup > rect {
-    stroke: red;
-}
-
 #freeMoVeApp-launcher {
     cursor: pointer;
 }
@@ -114,12 +90,4 @@ text {
 
 .trafficlight > .green {
     fill: green;
-}
-
-.chart-canvas {
-    fill: white;
-}
-
-.chart-graph {
-    stroke: grey;
 }
