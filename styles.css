@@ -1,0 +1,125 @@
+html,
+body,
+main,
+svg {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+svg {
+    background-color: black;
+}
+
+circle,
+path,
+line,
+polyline,
+rect {
+    stroke: black;
+    stroke-width: 4;
+}
+
+circle,
+path,
+rect {
+    fill: yellow;
+}
+
+polyline {
+    fill: none;
+}
+
+text {
+    fill: white;
+    font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+.route > polyline {
+    stroke-dasharray: 15;
+    animation: dash 60s infinite linear;
+}
+
+@keyframes dash {
+    from {
+        stroke-dashoffset: 1000;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+
+.route.transport > polyline {
+    stroke-dasharray: 0;
+    stroke: #CCCCCC !important;
+    animation: none;
+    stroke-width: 1;
+}
+
+.centered { /* @todo: bad practice! presentational markup! */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.draggable {
+    cursor: move;
+}
+
+.dragger > rect {
+    fill: purple;
+}
+
+.dragger > text {
+    stroke: grey;
+}
+
+.button {
+    cursor: pointer;
+}
+
+.button > rect {
+    fill: blanchedalmond;
+}
+
+.button > text {
+    stroke: blue;
+}
+
+.popup > rect {
+    stroke: red;
+}
+
+#freeMoVeApp-launcher {
+    cursor: pointer;
+}
+
+.trafficlight rect,
+.trafficlight circle {
+    stroke: black;
+    stroke-width: 2;
+    fill: white;
+}
+
+.trafficlight > .red {
+    fill: red;
+}
+
+.trafficlight > .yellow {
+    fill: yellow;
+}
+
+.trafficlight > .green {
+    fill: green;
+}
+
+.chart-canvas {
+    fill: white;
+}
+
+.chart-graph {
+    stroke: grey;
+}
